@@ -15,17 +15,21 @@ class MoviesController < ApplicationController
   end
   
   def with_ratings
-    @movies = Movie.where("lower(rating) in (?)", params[:ratings].keys.map(&:downcase))
-    @rating_filter = params[:ratings].keys
+    @rating_filter = params[:ratings] != nil ? params[:ratings].keys : (session[:ratings] != nil ? session[:ratings] : @all_ratings)
+    session[:ratings] = @rating_filter
+    @movies = Movie.where("lower(rating) in (?)", @rating_filter.map(&:downcase))
   end
 
   def index
-    @rating_filter = show_ratings
-    if params[:ratings]
-      with_ratings
+    show_ratings
+    with_ratings
+    if params.include?(:sort)
+      session[:sort] = params[:sort]
     else
-      @movies = Movie.order(params[:sort])
+      params[:sort] = session[:sort]
+      # redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings])
     end
+    @movies = @movies.order(params[:sort])
   end
 
   def new
