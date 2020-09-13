@@ -4,9 +4,11 @@
 %table#movies.table.table-striped.col-md-12
   %thead
     %tr
-      %th <a id="title_header" class="hilite" href=".">Movie Title</a>
+      %th{:class => ("hilite" if params[:sort] == "title")}
+        %a#title_header{:href => "#{movies_path(:sort => 'title')}"} Movie Title
       %th Rating
-      %th <a id="release_date_header" class="hilite" href=".">Release Date</a>
+      %th{:class => ("hilite" if params[:sort] == "release_date")}
+        %a#release_date_header{:href => "#{movies_path(:sort => 'release_date')}"} Release Date
       %th More Info
   %tbody
     - @movies.each do |movie|
