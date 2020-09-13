@@ -9,9 +9,23 @@ class MoviesController < ApplicationController
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
+  
+  def show_ratings
+    @all_ratings = Movie.pluck(:rating).uniq.sort
+  end
+  
+  def with_ratings
+    @movies = Movie.where(rating: params[:ratings].keys)
+    @rating_filter = params[:ratings].keys
+  end
 
   def index
-    @movies = Movie.order(params[:sort]).all
+    @rating_filter = show_ratings
+    if params[:ratings]
+      with_ratings
+    else
+      @movies = Movie.order(params[:sort])
+    end
   end
 
   def new
