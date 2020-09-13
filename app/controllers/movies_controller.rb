@@ -15,7 +15,7 @@ class MoviesController < ApplicationController
   end
   
   def with_ratings
-    @movies = Movie.where(rating: params[:ratings].keys)
+    @movies = Movie.where("lower(rating) in (?)", params[:ratings].keys.map(&:downcase))
     @rating_filter = params[:ratings].keys
   end
 
