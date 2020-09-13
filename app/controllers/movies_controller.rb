@@ -15,8 +15,9 @@ class MoviesController < ApplicationController
   end
   
   def with_ratings
-    @rating_filter = params[:ratings] != nil ? params[:ratings].keys : (session[:ratings] != nil ? session[:ratings] : @all_ratings)
-    session[:ratings] = @rating_filter
+    rating_hash = params[:ratings] != nil ? params[:ratings] : (session[:ratings] != nil ? session[:ratings] : Hash[@all_ratings.collect {|rating| [rating, 1]}])
+    session[:ratings] = rating_hash
+    @rating_filter = rating_hash.keys
     @movies = Movie.where("lower(rating) in (?)", @rating_filter.map(&:downcase))
   end
 
@@ -25,9 +26,10 @@ class MoviesController < ApplicationController
     with_ratings
     if params.include?(:sort)
       session[:sort] = params[:sort]
-    else
-      params[:sort] = session[:sort]
-      # redirect_to movies_path(:sort => session[:sort], :ratings => session[:ratings])
+    end
+    if not (params.include?(:sort) and params.include?(:rating))
+      flash.keep
+      redirect_to movies_path(:sort => session[:sort], :rating => session[:ratings])
     end
     @movies = @movies.order(params[:sort])
   end
