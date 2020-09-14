@@ -1,1 +1,3 @@
+https://github.com/andywang6666/rottenpotatoes-rails-intro
+
 http://nameless-hamlet-22565.herokuapp.com/
